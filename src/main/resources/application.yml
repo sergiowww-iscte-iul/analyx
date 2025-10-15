@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: analyx
+
+  datasource:
+    url: "jdbc:sqlserver://localhost:1433"
+    password: Sample123!
+    username: sa
+    hikari:
+      data-source-properties:
+        databaseName: analyx
+        trustServerCertificate: true
+        encrypt: false
+  flyway:
+    enabled: true
+    validate-migration-naming: true
