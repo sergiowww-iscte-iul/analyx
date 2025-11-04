@@ -1,10 +1,13 @@
 services:
-  sqlserver-local:
-    image: "mcr.microsoft.com/mssql/server:latest"
-    container_name: "sqlserver-local"
+  mysql-local:
+    image: "mysql:8.0.44-debian"
+    container_name: "mysql-local"
     environment:
-      SA_PASSWORD: ${SA_PASSWORD}
-      ACCEPT_EULA: "Y"
+      MYSQL_USER: "analyx-user"
+      MYSQL_PASSWORD: "123456"
+      MYSQL_ROOT_PASSWORD: "123456"
+    expose:
+      - "3306"
     ports:
-      - 1433:1433
+      - "3306:3306"
 

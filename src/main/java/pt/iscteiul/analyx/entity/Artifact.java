@@ -1,12 +1,6 @@
 package pt.iscteiul.analyx.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -16,26 +10,25 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "artifact")
-public class Artifact {
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class Artifact {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "idClassMetric", nullable = false)
+	@Column(name = "id_artifact", nullable = false)
 	private Integer id;
 
-	@Size(max = 100)
-	@NotNull(message = "artifact name is required")
-	@Column(name = "nmClass", nullable = false, length = 100)
-	private String artifactName;
+	@Size(max = 45)
+	@NotNull
+	@Column(name = "name", nullable = false, length = 45)
+	private String name;
 
 	@NotNull
-	@Column(name = "qtLinesOfCode", nullable = false)
-	private Integer linesOfCode;
+	@Column(name = "lines_code", nullable = false)
+	private Integer linesCode;
 
-	@Enumerated
-	@Column(name = "tpArtifact", columnDefinition = "tinyint not null")
-	private TypeArtifact type;
-
-	@Column(name = "qtCoupling")
-	private Integer coupling;
+	@NotNull
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "id_project", nullable = false)
+	private Project project;
 
 }
