@@ -14,3 +14,16 @@ spring:
   flyway:
     enabled: true
     validate-migration-naming: true
+    url: "jdbc:mysql://localhost:3306/"
+    password: "${spring.datasource.password}"
+    user: "${spring.datasource.username}"
+    schemas: flyway
+
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+server:
+  error:
+    include-binding-errors: always
+    include-message: always

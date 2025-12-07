@@ -31,7 +31,7 @@ public class Project {
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "id_user", nullable = false)
-	private User idUser;
+	private AppUser idUser;
 
 	@NotNull
 	@Column(name = "status_analysis", nullable = false)
