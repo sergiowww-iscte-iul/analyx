@@ -31,9 +31,9 @@ public class AppUser {
 	@Column(name = "email", nullable = false, length = 45)
 	private String email;
 
-	@Size(max = 45)
+	@Size(max = 200)
 	@NotNull
-	@Column(name = "password", nullable = false, length = 45)
+	@Column(name = "password", nullable = false, length = 200)
 	private String password;
 
 }

@@ -18,7 +18,8 @@ spring:
     password: "${spring.datasource.password}"
     user: "${spring.datasource.username}"
     schemas: flyway
-
+  jpa:
+    show-sql: true
 
 logging:
   level:

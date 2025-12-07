@@ -1,18 +1,14 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head>
-    <title>Analyx - Login</title>
-    <th:block th:insert="~{fragments/header.html}"></th:block>
-</head>
-<body>
-<div class="container">
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<section layout:fragment="content">
     <div class="w-25 ms-auto me-auto mt-5">
         <div class="h1 text-primary mb-4">Analyx Login</div>
-        <form action="/user/dologin" method="post" class="d-flex justify-content-center flex-column gap-3">
+        <form th:action="@{/login}" method="post" class="d-flex justify-content-center flex-column gap-3">
             <div class="form-group d-grid">
                 <label>
                     E-mail or username:
-                    <input type="text" name="emailOrUsername" class="form-control">
+                    <input type="text" name="username" class="form-control">
                 </label>
             </div>
             <div class="form-group d-grid">
@@ -28,6 +24,6 @@
         </form>
     </div>
 
-</div>
-</body>
+</section>
+
 </html>

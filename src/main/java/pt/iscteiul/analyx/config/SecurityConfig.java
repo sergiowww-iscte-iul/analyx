@@ -33,12 +33,13 @@ public class SecurityConfig {
 				// 2. Form Login configuration
 				.formLogin(form -> form
 						.loginPage("/user/login") // Specify custom login page URL (GET mapping)
+						.loginProcessingUrl("/login")
 						.defaultSuccessUrl("/", true) // Redirect after successful login
 						.permitAll()
 				)
 				// 3. Logout configuration
 				.logout(logout -> logout
-						.logoutSuccessUrl("/user/logout") // Redirect after successful logout
+						.logoutSuccessUrl("/user/login?logout") // Redirect after successful logout
 						.permitAll()
 				)
 		;

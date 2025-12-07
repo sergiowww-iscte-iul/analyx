@@ -3,13 +3,17 @@ package pt.iscteiul.analyx.controller;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pt.iscteiul.analyx.dto.UserDTO;
 import pt.iscteiul.analyx.service.UserDetailsServiceImpl;
+import pt.iscteiul.analyx.util.ControllerKeys;
 
 @Controller
 @RequestMapping("/user")
@@ -19,14 +23,16 @@ public class UserController {
 	private UserDetailsServiceImpl userDetailsService;
 
 	@GetMapping("/new-user")
-	public String newUser() {
+	public String newUser(Model model) {
+		model.addAttribute("userDTO", new UserDTO());
 		return "sign-up-form";
 	}
 
 	@PostMapping("/sign-up")
-	public String createUser(@Valid UserDTO userDTO, BindingResult result, RedirectAttributes redirectAttributes) {
+	public String createUser(@ModelAttribute("userDTO") @Valid UserDTO userDTO, BindingResult result, RedirectAttributes redirectAttributes) {
 		if (!result.hasErrors()) {
-//		userDetailsService.createUser()
+			redirectAttributes.addFlashAttribute(ControllerKeys.INFO_MESSAGE, "User created successfully");
+			userDetailsService.createUser(userDTO);
 			return "redirect:/user/login";
 		}
 
@@ -34,13 +40,18 @@ public class UserController {
 	}
 
 	@GetMapping("/login")
-	public String login() {
-		return "login-form";
-	}
+	public String login(@RequestParam(value = "error", required = false) String error,
+						@RequestParam(value = "logout", required = false) String logout,
+						Model model) {
 
-	@PostMapping("/dologin")
-	public String doLogin() {
-		return "redirect:/";
+		if (error != null) {
+			model.addAttribute(ControllerKeys.ERROR_MESSAGE, "Invalid username or password");
+		}
+
+		if (logout != null) {
+			model.addAttribute(ControllerKeys.INFO_MESSAGE, "You have been logged out successfully.");
+		}
+		return "login-form";
 	}
 
 	@GetMapping("/logout")
