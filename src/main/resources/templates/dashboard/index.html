@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Analyx</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Analyx</a>
+        <div class="d-flex align-items-center">
+            <span class="navbar-text text-white me-3">
+                Olá, <span th:text="${user.username}"></span>!
+            </span>
+            <form th:action="@{/auth/logout}" method="post" class="d-inline">
+                <button type="submit" class="btn btn-outline-light btn-sm">Sair</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2>Meus Projetos</h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <a th:href="@{/projects/new}" class="btn btn-primary">
+                ➕ Novo Projeto
+            </a>
+        </div>
+    </div>
+
+    <!-- Se não tem projetos -->
+    <div th:if="${#lists.isEmpty(projects)}" class="alert alert-info" role="alert">
+        <h5>Nenhum projeto criado ainda</h5>
+        <p>Crie seu primeiro projeto para começar a analisar código Java!</p>
+        <a th:href="@{/projects/new}" class="btn btn-primary">Criar Primeiro Projeto</a>
+    </div>
+
+    <!-- Lista de projetos -->
+    <div th:if="${!#lists.isEmpty(projects)}" class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Criado em</th>
+                        <th>Ações</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="project : ${projects}">
+                        <td>
+                            <strong th:text="${project.name}"></strong>
+                        </td>
+                        <td th:text="${project.description} ?: 'Sem descrição'"></td>
+                        <td th:text="${#temporals.format(project.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td>
+                            <a th:href="@{/projects/{id}(id=${project.id})}" class="btn btn-sm btn-outline-primary">
+                                Ver
+                            </a>
+                            <a th:href="@{/projects/{id}/edit(id=${project.id})}" class="btn btn-sm btn-warning">
+                                ✏️ Editar
+                            </a>
+                            <a th:href="@{/projects/{id}/upload(id=${project.id})}" class="btn btn-sm btn-success">
+                                📤 Upload
+                            </a>
+                            <form th:action="@{/projects/{id}/delete(id=${project.id})}" method="post" class="d-inline"
+                                  onsubmit="return confirm('Tem certeza que deseja deletar este projeto? Todos os relatórios serão perdidos!');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    🗑️ Deletar
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

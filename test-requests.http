@@ -1,0 +1,15 @@
+### Test Hello
+GET http://localhost:8080/test/hello
+
+### Create User
+POST http://localhost:8080/test/users
+Content-Type: application/json
+
+{
+  "username": "joao",
+  "email": "joao@email.com",
+  "password": "senha123"
+}
+
+### Get All Users
+GET http://localhost:8080/test/users

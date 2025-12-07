@@ -1,13 +1,22 @@
 services:
-  mysql-local:
-    image: "mysql:8.0.44-debian"
-    container_name: "mysql-local"
+  postgres:
+    image: postgres:16-alpine
+    container_name: analyx-postgres
+    restart: unless-stopped
     environment:
-      MYSQL_USER: "analyx-user"
-      MYSQL_PASSWORD: "123456"
-      MYSQL_ROOT_PASSWORD: "123456"
-    expose:
-      - "3306"
+      POSTGRES_DB: analyx
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
-      - "3306:3306"
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+volumes:
+  postgres_data:
+    driver: local

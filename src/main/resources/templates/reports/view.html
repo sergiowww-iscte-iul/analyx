@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Métricas - Analyx</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/dashboard">Analyx</a>
+        <div class="d-flex align-items-center">
+            <a th:href="@{/projects/{id}(id=${project.id})}" class="btn btn-outline-light btn-sm me-2">
+                ← Voltar ao Projeto
+            </a>
+            <form th:action="@{/auth/logout}" method="post" class="d-inline">
+                <button type="submit" class="btn btn-outline-light btn-sm">Sair</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="container-fluid mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2>📊 Métricas de Código</h2>
+            <p class="text-muted mb-1">
+                <strong>Projeto:</strong> <span th:text="${project.name}"></span>
+            </p>
+            <p class="text-muted mb-1">
+                <strong>Arquivo:</strong> <span th:text="${report.fileName}"></span>
+            </p>
+            <p class="text-muted">
+                <strong>Versão:</strong> <span th:text="${report.version} ?: '-'"></span> |
+                <strong>Analisado em:</strong> <span th:text="${#temporals.format(report.completedAt, 'dd/MM/yyyy HH:mm')}"></span>
+            </p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a th:href="@{/reports/{id}/export/csv(id=${report.id})}" class="btn btn-success">
+                📥 Exportar CSV
+            </a>
+            <a th:href="@{/reports/{id}/export/json(id=${report.id})}" class="btn btn-info">
+                📄 Exportar JSON
+            </a>
+        </div>
+    </div>
+
+    <!-- Resumo -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Classes</h5>
+                    <h2 class="text-primary" th:text="${classMetrics.size()}"></h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Métodos</h5>
+                    <h2 class="text-success" th:text="${methodMetrics.size()}"></h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Total LOC</h5>
+                    <h2 class="text-warning" th:text="${#aggregates.sum(allMetrics.![loc])}"></h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Complexidade Média</h5>
+                    <h2 class="text-danger"
+                        th:text="${methodMetrics.isEmpty() ? 0 : #numbers.formatDecimal(#aggregates.sum(methodMetrics.![cyclomaticComplexity]) / methodMetrics.size(), 1, 1)}">
+                    </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs" id="metricsTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="classes-tab" data-bs-toggle="tab" data-bs-target="#classes" type="button">
+                Classes (<span th:text="${classMetrics.size()}"></span>)
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="methods-tab" data-bs-toggle="tab" data-bs-target="#methods" type="button">
+                Métodos (<span th:text="${methodMetrics.size()}"></span>)
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-3" id="metricsTabContent">
+        <!-- Tab Classes -->
+        <div class="tab-pane fade show active" id="classes" role="tabpanel">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Package</th>
+                        <th>Classe</th>
+                        <th>LOC</th>
+                        <th>Atributos</th>
+                        <th>Métodos</th>
+                        <th>CBO</th>
+                        <th>DIT</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="metric : ${classMetrics}">
+                        <td><small th:text="${metric.packageName}"></small></td>
+                        <td><strong th:text="${metric.className}"></strong></td>
+                        <td th:text="${metric.loc}"></td>
+                        <td th:text="${metric.numAttributes}"></td>
+                        <td th:text="${metric.numMethods}"></td>
+                        <td th:text="${metric.cbo}"></td>
+                        <td th:text="${metric.dit}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab Métodos -->
+        <div class="tab-pane fade" id="methods" role="tabpanel">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Classe</th>
+                        <th>Método</th>
+                        <th>LOC</th>
+                        <th>Complexidade Ciclomática</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="metric : ${methodMetrics}">
+                        <td><small th:text="${metric.className}"></small></td>
+                        <td><strong th:text="${metric.methodName}"></strong></td>
+                        <td th:text="${metric.loc}"></td>
+                        <td>
+                                    <span th:text="${metric.cyclomaticComplexity}"
+                                          th:classappend="${metric.cyclomaticComplexity > 10 ? 'badge bg-danger' : (metric.cyclomaticComplexity > 5 ? 'badge bg-warning' : 'badge bg-success')}">
+                                    </span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
