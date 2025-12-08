@@ -13,12 +13,16 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pt.iscteiul.analyx.dto.ProjectDTO;
+import pt.iscteiul.analyx.entity.ClassArtifact;
+import pt.iscteiul.analyx.entity.MethodArtifact;
 import pt.iscteiul.analyx.entity.Project;
+import pt.iscteiul.analyx.service.ArtifactService;
 import pt.iscteiul.analyx.service.ProjectBatchServiceManager;
 import pt.iscteiul.analyx.service.ProjectService;
 import pt.iscteiul.analyx.util.ControllerKeys;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
@@ -31,6 +35,9 @@ public class ProjectsController {
 	@Autowired
 	private ProjectBatchServiceManager projectBatchServiceManager;
 
+	@Autowired
+	private ArtifactService artifactService;
+
 	@GetMapping("/dashboard")
 	public String home(Authentication auth, Model model) {
 		List<Project> projects = projectService.findAllByUserName(auth.getName());
@@ -42,6 +49,32 @@ public class ProjectsController {
 	public String newProject(Model model) {
 		model.addAttribute("projectDTO", ProjectDTO.builder().build());
 		return "project";
+	}
+
+	@GetMapping("/{idProject}/view")
+	public String viewProject(Model model, @PathVariable Integer idProject, Authentication auth) {
+		String username = auth.getName();
+		Project project = projectService.getProjectByIdAndUser(idProject, username);
+		List<ClassArtifact> classArtifacts = artifactService.findByProject(idProject, username);
+		model.addAttribute("classArtifacts", classArtifacts);
+		long totalLinesOfCode = classArtifacts.stream()
+				.flatMap(c -> c.getMethodsArtifact().stream())
+				.collect(Collectors.summarizingInt(MethodArtifact::getLinesCode))
+				.getSum();
+		long totalMethods = classArtifacts.stream()
+				.mapToLong(c -> c.getMethodsArtifact().size())
+				.sum();
+		model.addAttribute("totalMethods", totalMethods);
+
+		double averageCyclomaticComplexity = classArtifacts.stream()
+				.flatMap(c -> c.getMethodsArtifact().stream())
+				.collect(Collectors.summarizingDouble(MethodArtifact::getCyclomaticComplexity))
+				.getAverage();
+		model.addAttribute("averageCyclomaticComplexity", averageCyclomaticComplexity);
+
+		model.addAttribute("totalLinesOfCode", totalLinesOfCode);
+		model.addAttribute("project", project);
+		return "view";
 	}
 
 	@GetMapping("{idProject}/edit")

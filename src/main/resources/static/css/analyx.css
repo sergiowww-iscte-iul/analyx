@@ -1,3 +1,6 @@
-body{
-    border: 1px;
+.limited-column {
+    width: 576px;
+    overflow: hidden;
+    display: flex;
+    column-gap: 4px;
 }

@@ -80,10 +80,19 @@ public class ProjectService {
 		}
 	}
 
+	public Project getProjectByIdAndUser(Integer idProject, String username) {
+		return projectRepository.findByIdAndUser_Name(idProject, username)
+				.orElseThrow(throwBusinessException(idProject));
+	}
+
+
+	public Project getProjectById(Integer idProject) {
+		return projectRepository.findById(idProject)
+				.orElseThrow(throwBusinessException(idProject));
+	}
 
 	public Project getProjectById(Long idProject) {
-		return projectRepository.findById(idProject.intValue())
-				.orElseThrow(() -> new BusinessException("Project %d not found.".formatted(idProject)));
+		return getProjectById(idProject.intValue());
 	}
 
 	public ProjectDTO getProjectForEditing(Integer idProject) {
@@ -136,4 +145,5 @@ public class ProjectService {
 	public void markProjectAsAnalysisFinished(Long idProject) {
 		updateStatus(idProject, StatusAnalysis.FINISHED);
 	}
+
 }
