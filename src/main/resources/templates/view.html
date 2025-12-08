@@ -21,10 +21,10 @@
             </div>
 
             <div class="col-md-4 text-end">
-                <a th:href="@{/reports/{id}/export/csv(id=${project.id})}" class="btn btn-success">
+                <a target="_blank" th:href="@{/reports/{id}/csv(id=${project.id})}" class="btn btn-success">
                     <i class="bi bi-file-earmark-arrow-down me-1"></i> Export CSV
                 </a>
-                <a th:href="@{/reports/{id}/export/json(id=${project.id})}" class="btn btn-info">
+                <a target="_blank" th:href="@{/reports/{id}/json(id=${project.id})}" class="btn btn-info">
                     <i class="bi bi-filetype-json me-1"></i> Export JSON
                 </a>
             </div>
