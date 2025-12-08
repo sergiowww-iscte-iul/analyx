@@ -1,12 +1,16 @@
 package pt.iscteiul.analyx.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -30,5 +34,14 @@ public class ClassArtifact extends Artifact {
 	@NotNull
 	@Column(name = "noc", nullable = false)
 	private Integer noc;
+
+	@Column(name = "fan_in")
+	private Integer fanIn;
+
+	@Column(name = "fan_out")
+	private Integer fanOut;
+
+	@OneToMany(mappedBy = "classArtifact", cascade = CascadeType.PERSIST)
+	private List<MethodArtifact> methodsArtifact;
 
 }

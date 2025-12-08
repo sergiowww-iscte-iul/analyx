@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout}">
+<section layout:fragment="content">
+    <div class="container-fluid mt-4">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h2><i class="bi bi-graph-up-arrow me-2"></i> Code Metrics</h2>
+
+                <p class="text-muted mb-1">
+                    <strong>Project:</strong> <span th:text="${project.name}"></span>
+                </p>
+                <p class="text-muted mb-1">
+                    <strong>Status analysis:</strong> <span th:text="${project.statusAnalysis}"></span>
+                </p>
+                <p class="text-muted">
+                    <strong>Analyzed on:</strong> <span th:text="${#temporals.format(project.generatedDate, 'dd/MM/yyyy HH:mm')}"></span>
+                </p>
+            </div>
+
+            <div class="col-md-4 text-end">
+                <a target="_blank" th:href="@{/reports/{id}/csv(id=${project.id})}" class="btn btn-success">
+                    <i class="bi bi-file-earmark-arrow-down me-1"></i> Export CSV
+                </a>
+                <a target="_blank" th:href="@{/reports/{id}/json(id=${project.id})}" class="btn btn-info">
+                    <i class="bi bi-filetype-json me-1"></i> Export JSON
+                </a>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Classes</h5>
+                        <h2 class="text-primary" th:text="${classArtifacts.size()}"></h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Methods</h5>
+                        <h2 class="text-success" th:text="${totalMethods}"></h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Total LOC</h5>
+                        <h2 class="text-warning" th:text="${totalLinesOfCode}"></h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Average Complexity</h5>
+                        <h2 class="text-danger"
+                            th:text="${#numbers.formatDecimal(averageCyclomaticComplexity, 1, 1)}">
+                        </h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-secondary">
+                <tr>
+                    <th>Class</th>
+                    <th>LOC</th>
+                    <th>Attributes</th>
+                    <th>Methods</th>
+                    <th>CBO</th>
+                    <th>DIT</th>
+                </tr>
+                <tr>
+                    <th colspan="2"></th>
+                    <th colspan="4" class="text-center">Cyclomatic Complexity</th>
+                </tr>
+                </thead>
+                <tbody>
+                <th:block th:each="metric : ${classArtifacts}">
+                    <tr>
+                        <td th:title="${metric.name}" class="bg-light">
+                            <span class="limited-column"><i class="bi bi-filetype-java"></i> <strong th:text="${metric.name}"></strong></span>
+                        </td>
+                        <td th:text="${metric.linesCode}" class="bg-light"></td>
+                        <td th:text="${metric.numberAttributes}" class="bg-light"></td>
+                        <td th:text="${metric.methodsArtifact.size()}" class="bg-light"></td>
+                        <td th:text="${metric.cbo}" class="bg-light"></td>
+                        <td th:text="${metric.dit}" class="bg-light"></td>
+                    </tr>
+                    <tr th:each="method : ${metric.methodsArtifact}">
+                        <td th:title="${method.name}">
+                            <span class="limited-column ms-4"><i class="bi bi-braces"></i> <strong th:text="${method.name}"></strong></span>
+                        </td>
+                        <td th:text="${method.linesCode}"></td>
+                        <td colspan="4" class="text-center">
+                            <span th:text="${method.cyclomaticComplexity}"></span>
+                        </td>
+                    </tr>
+
+                </th:block>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</section>
+</html>

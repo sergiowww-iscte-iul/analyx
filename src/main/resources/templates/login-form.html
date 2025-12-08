@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<section layout:fragment="content">
+    <div class="w-25 ms-auto me-auto mt-5">
+        <div class="h1 text-primary mb-4">Analyx Login</div>
+        <form th:action="@{/login}" method="post" class="d-flex justify-content-center flex-column gap-3">
+            <div class="form-group d-grid">
+                <label>
+                    E-mail or username:
+                    <input type="text" name="username" class="form-control">
+                </label>
+            </div>
+            <div class="form-group d-grid">
+                <label>
+                    Password:
+                    <input type="password" name="password" class="form-control">
+                </label>
+            </div>
+            <div class="d-flex justify-content-center flex-column gap-3">
+                <button type="submit" class="btn btn-primary">Login</button>
+                <a href="/user/new-user" class="btn btn-secondary">Sign-up</a>
+            </div>
+        </form>
+    </div>
+
+</section>
+
+</html>

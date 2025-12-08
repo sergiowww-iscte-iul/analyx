@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Analyx</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/node_modules/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/analyx.css">
+    <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+
+<nav sec:authorize="isAuthenticated()" class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">Analyx</a>
+        <div class="d-flex align-items-center gap-2">
+            <a href="/user/profile" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-person-circle"></i>
+                <th:block sec:authentication="name"></th:block>
+            </a>
+            <a href="/projects/dashboard" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-speedometer"></i>
+                Dashboard
+            </a>
+            <form th:action="@{/user/logout}" method="post" class="d-inline">
+                <button type="submit" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-box-arrow-left"></i>
+                    Sair
+                </button>
+            </form>
+        </div>
+    </div>
+</nav>
+<div th:if="*{infoMessage!=null}" class="alert alert-info" th:text="${infoMessage}"></div>
+<div th:if="*{errorMessage!=null}" class="alert alert-danger" th:text="${errorMessage}"></div>
+<div class="container pt-5">
+
+    <th:block layout:fragment="content"></th:block>
+
+</div>
+</body>
+</html>

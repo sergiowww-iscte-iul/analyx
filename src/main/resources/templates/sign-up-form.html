@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<section layout:fragment="content">
+    <div class="h1 text-primary" sec:authorize="!isAuthenticated()">Sign-up to check your project's metric</div>
+    <h2 sec:authorize="isAuthenticated()">User's profile</h2>
+    <div class="w-25 ms-auto me-auto mt-5">
+
+        <form method="POST"
+              th:action="${userDTO.id == null} ? @{/user/sign-up} : @{/user/update}"
+              th:object="${userDTO}"
+              class="d-flex justify-content-center flex-column gap-3">
+            <input type="hidden" th:field="*{id}"/>
+
+            <div class="form-group">
+                <label for="name">Username:</label>
+                <input id="name"
+                       type="text"
+                       th:field="*{name}"
+                       class="form-control"
+                       th:errorclass="is-invalid">
+
+                <div class="invalid-feedback"
+                     th:if="${#fields.hasErrors('name')}"
+                     th:errors="*{name}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">E-mail:</label>
+                <input id="email"
+                       type="email"
+                       th:field="*{email}"
+                       class="form-control"
+                       th:errorclass="is-invalid">
+
+                <div class="invalid-feedback"
+                     th:if="${#fields.hasErrors('email')}"
+                     th:errors="*{email}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input id="password"
+                       type="password"
+                       th:field="*{password}"
+                       class="form-control"
+                       th:errorclass="is-invalid">
+
+                <div class="invalid-feedback"
+                     th:if="${#fields.hasErrors('password')}"
+                     th:errors="*{password}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">Confirm your password:</label>
+                <input id="confirmPassword"
+                       type="password"
+                       th:field="*{confirmPassword}"
+                       class="form-control"
+                       th:errorclass="is-invalid">
+
+                <div class="invalid-feedback"
+                     th:if="${#fields.hasErrors('confirmPassword')}"
+                     th:errors="*{confirmPassword}">
+                </div>
+                <div class="invalid-feedback"
+                     th:if="${#fields.hasErrors('passwordCorrect')}"
+                     th:errors="*{passwordCorrect}">
+                </div>
+            </div>
+
+            <!-- GLOBAL ERRORS (for @AssertTrue) -->
+            <div class="alert alert-danger"
+                 th:if="${#fields.hasGlobalErrors()}">
+                <div th:each="err : ${#fields.globalErrors()}"
+                     th:text="${err}">
+                </div>
+            </div>
+
+            <div class="d-flex flex-grow-1 justify-content-between gap-3">
+                <button type="submit" class="btn btn-primary w-50">
+                    <th:block sec:authorize="isAuthenticated()"><i class="bi bi-save"></i> Update</th:block>
+                    <th:block sec:authorize="!isAuthenticated()"><i class="bi bi-person-plus me-2"></i> Sign-up</th:block>
+                </button>
+                <a class="btn btn-secondary w-50" href="/user/login" sec:authorize="!isAuthenticated()">
+                    <i class="bi bi-box-arrow-in-right me-2"></i> Login
+                </a>
+            </div>
+
+        </form>
+    </div>
+</section>
+</html>
