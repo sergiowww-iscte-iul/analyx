@@ -13,6 +13,8 @@ import pt.iscteiul.analyx.entity.AppUser;
 import pt.iscteiul.analyx.exception.BusinessException;
 import pt.iscteiul.analyx.repository.UserRepository;
 
+import java.util.function.Supplier;
+
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
@@ -45,6 +47,32 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		appUser.setName(userDTO.getName());
 		appUser.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 		appUser.setEmail(userDTO.getEmail());
+		userRepository.save(appUser);
+	}
+
+	public UserDTO getUserByName(String username) {
+		return userRepository.findByName(username)
+				.map(u -> UserDTO.builder()
+						.id(u.getId())
+						.name(u.getName())
+						.email(u.getEmail())
+						.build())
+				.orElseThrow(throwBusinessException(username));
+	}
+
+	private static Supplier<BusinessException> throwBusinessException(String username) {
+		return () -> new BusinessException("User %s not found".formatted(username));
+	}
+
+	@Transactional
+	public void updateUser(UserDTO userDTO, String username) {
+		AppUser appUser = userRepository.findByName(username)
+				.orElseThrow(throwBusinessException(username));
+
+		appUser.setName(userDTO.getName());
+		appUser.setEmail(userDTO.getEmail());
+		appUser.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+
 		userRepository.save(appUser);
 	}
 }

@@ -2,6 +2,7 @@ package pt.iscteiul.analyx.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,6 +29,12 @@ public class UserController {
 		return "sign-up-form";
 	}
 
+	@GetMapping("/profile")
+	public String profile(Model model, Authentication auth) {
+		model.addAttribute("userDTO", userDetailsService.getUserByName(auth.getName()));
+		return "sign-up-form";
+	}
+
 	@PostMapping("/sign-up")
 	public String createUser(@ModelAttribute("userDTO") @Valid UserDTO userDTO, BindingResult result, RedirectAttributes redirectAttributes) {
 		if (!result.hasErrors()) {
@@ -36,6 +43,22 @@ public class UserController {
 			return "redirect:/user/login";
 		}
 
+		return "sign-up-form";
+	}
+
+	@PostMapping("/update")
+	public String updateUser(
+			@ModelAttribute("userDTO")
+			@Valid
+			UserDTO userDTO,
+			BindingResult result,
+			RedirectAttributes redirectAttributes,
+			Authentication auth) {
+		if (!result.hasErrors()) {
+			redirectAttributes.addFlashAttribute(ControllerKeys.INFO_MESSAGE, "User updated successfully, please logout to see the changes");
+			userDetailsService.updateUser(userDTO, auth.getName());
+			return "redirect:/";
+		}
 		return "sign-up-form";
 	}
 

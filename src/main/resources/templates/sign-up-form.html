@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layout}">
 <section layout:fragment="content">
-    <div class="h1 text-primary">Sign-up to check your project's metric</div>
+    <div class="h1 text-primary" sec:authorize="!isAuthenticated()">Sign-up to check your project's metric</div>
+    <h2 sec:authorize="isAuthenticated()">User's profile</h2>
     <div class="w-25 ms-auto me-auto mt-5">
 
-        <form method="POST" th:action="@{/user/sign-up}"
+        <form method="POST"
+              th:action="${userDTO.id == null} ? @{/user/sign-up} : @{/user/update}"
               th:object="${userDTO}"
               class="d-flex justify-content-center flex-column gap-3">
+            <input type="hidden" th:field="*{id}"/>
 
             <div class="form-group">
                 <label for="name">Username:</label>
@@ -80,9 +84,10 @@
 
             <div class="d-flex flex-grow-1 justify-content-between gap-3">
                 <button type="submit" class="btn btn-primary w-50">
-                    <i class="bi bi-person-plus me-2"></i> Sign-up
+                    <th:block sec:authorize="isAuthenticated()"><i class="bi bi-save"></i> Update</th:block>
+                    <th:block sec:authorize="!isAuthenticated()"><i class="bi bi-person-plus me-2"></i> Sign-up</th:block>
                 </button>
-                <a class="btn btn-secondary w-50" href="/user/login">
+                <a class="btn btn-secondary w-50" href="/user/login" sec:authorize="!isAuthenticated()">
                     <i class="bi bi-box-arrow-in-right me-2"></i> Login
                 </a>
             </div>
