@@ -1,5 +1,6 @@
 package pt.iscteiul.analyx.batch;
 
+import com.github.mauricioaniche.ck.CK;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -8,6 +9,7 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
+import org.springframework.batch.item.support.builder.CompositeItemProcessorBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +29,11 @@ public class ProjectProcessingConfig {
 
 	@Autowired
 	private MarkProjectAsFailed markProjectAsFailed;
+
+	@Bean
+	public CK ck(){
+		return new CK();
+	}
 
 	@Bean(BatchConstants.JOB_PROCESS_PROJECT)
 	public Job jobProcessProject(Step stepExtractZipFiles,
@@ -81,7 +88,12 @@ public class ProjectProcessingConfig {
 		return new StepBuilder("stepReadProjectFiles", jobRepository)
 				.<FileSystemResource, Artifact>chunk(processingChunkFiles, transactionManager)
 				.reader(projectFilesReader)
-				.processor(metricsExtractorProcessor)
+				.processor(new CompositeItemProcessorBuilder<FileSystemResource, Artifact>()
+						.delegates(
+								metricsExtractorProcessor,
+								new ListUnpackingItemProcessor<Artifact>()
+						)
+						.build())
 				.writer(writer)
 				.exceptionHandler(markProjectAsFailed)
 				.build();

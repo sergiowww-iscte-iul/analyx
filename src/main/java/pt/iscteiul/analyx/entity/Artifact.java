@@ -17,9 +17,9 @@ public abstract class Artifact {
 	@Column(name = "id_artifact", nullable = false)
 	private Integer id;
 
-	@Size(max = 45)
+	@Size(max = 300)
 	@NotNull
-	@Column(name = "name", nullable = false, length = 45)
+	@Column(name = "name", nullable = false, length = 300)
 	private String name;
 
 	@NotNull

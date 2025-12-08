@@ -9,6 +9,8 @@ import pt.iscteiul.analyx.dto.ProjectDTO;
 import pt.iscteiul.analyx.entity.Project;
 import pt.iscteiul.analyx.entity.StatusAnalysis;
 import pt.iscteiul.analyx.exception.BusinessException;
+import pt.iscteiul.analyx.repository.ClassArtifactRepository;
+import pt.iscteiul.analyx.repository.MethodArtifactRepository;
 import pt.iscteiul.analyx.repository.ProjectRepository;
 import pt.iscteiul.analyx.repository.UserRepository;
 
@@ -19,7 +21,7 @@ import java.util.function.Supplier;
 import static java.util.Objects.nonNull;
 
 @Service
-public class ProjectService {
+public class 	ProjectService {
 
 	@Autowired
 	private WorkspaceService workspaceService;
@@ -32,6 +34,12 @@ public class ProjectService {
 
 	@Autowired
 	private ProjectBatchServiceManager projectBatchServiceManager;
+
+	@Autowired
+	private MethodArtifactRepository methodArtifactRepository;
+
+	@Autowired
+	private ClassArtifactRepository classArtifactRepository;
 
 	public List<Project> findAllByUserName(String userName) {
 		return projectRepository.findByUser_Name(userName);
@@ -99,9 +107,12 @@ public class ProjectService {
 
 	@Transactional
 	public void delete(Integer idProject) {
-		projectRepository.findById(idProject)
-				.map(workspaceService::deleteProjectFiles)
-				.ifPresent(projectRepository::delete);
+		Project project = projectRepository.findById(idProject)
+				.orElseThrow(throwBusinessException(idProject));
+		workspaceService.deleteProjectFiles(project);
+		methodArtifactRepository.deleteByProject(project);
+		classArtifactRepository.deleteByProject(project);
+		projectRepository.delete(project);
 
 	}
 

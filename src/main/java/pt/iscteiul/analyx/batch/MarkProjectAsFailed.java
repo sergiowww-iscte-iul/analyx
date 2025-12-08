@@ -23,5 +23,6 @@ public class MarkProjectAsFailed implements ExceptionHandler {
 	public void handleException(RepeatContext context, Throwable throwable) {
 		log.error("job failed: {}", throwable.getMessage(), throwable);
 		projectService.markProjectAsFailed(idProject);
+		context.setTerminateOnly();
 	}
 }

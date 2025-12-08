@@ -31,4 +31,10 @@ public class ClassArtifact extends Artifact {
 	@Column(name = "noc", nullable = false)
 	private Integer noc;
 
+	@Column(name = "fan_in")
+	private Integer fanIn;
+
+	@Column(name = "fan_out")
+	private Integer fanOut;
+
 }
