@@ -20,11 +20,22 @@ spring:
     schemas: flyway
   jpa:
     show-sql: true
+  servlet:
+    multipart:
+      max-file-size: 20MB
+  batch:
+    jdbc:
+      initialize-schema: never
+    job:
+      enabled: false
 
-logging:
-  level:
-    org.springframework.web: DEBUG
-server:
-  error:
-    include-binding-errors: always
-    include-message: always
+analyx:
+  project-files-directory: "/Users/sergio/analyx-projects"
+  process-x-files-at-time: 5
+#logging:
+#  level:
+#    org.springframework.web: DEBUG
+#server:
+#  error:
+#    include-binding-errors: always
+#    include-message: always

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout}">
+<section layout:fragment="content">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="mb-4" th:if="${projectDTO.id() == null}">Create new project</h2>
+                    <h2 class="mb-4" th:if="${projectDTO.id() != null}">
+                        Edit project
+                        <th:block th:text="${projectDTO.id}"></th:block>
+                    </h2>
+
+                    <form th:action="@{/projects/save}"
+                          method="post"
+                          th:object="${projectDTO}"
+                          enctype="multipart/form-data">
+                        <input type="hidden" th:field="*{id}"/>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Project's name *</label>
+                            <input id="name"
+                                   type="text"
+                                   th:field="*{name}"
+                                   class="form-control"
+                                   placeholder="Ex: project 1's codebase"
+                                   required
+                                   th:errorclass="is-invalid">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea th:field="*{description}"
+                                      class="form-control"
+                                      id="description"
+                                      name="description"
+                                      rows="4"
+                                      placeholder="Describe the project's objective"></textarea> <small class="text-muted">Optional</small>
+                        </div>
+                        <div class="mb-4">
+                            <label for="projectFiles" class="form-label">Zip file with Java code *</label>
+                            <input type="file"
+                                   class="form-control"
+                                   id="projectFiles"
+                                   name="projectFiles"
+                                   th:attr="required=${projectDTO.id() == null }"
+                                   accept=".zip">
+                            <small class="text-muted"> Select a .zip file containing java source code (.java) </small>
+                        </div>
+
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <th:block th:if="${projectDTO.id() == null}">Create project</th:block>
+                                <th:block th:if="${projectDTO.id() != null}">Edit project</th:block>
+                            </button>
+                            <a th:href="@{/projects/dashboard}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</html>

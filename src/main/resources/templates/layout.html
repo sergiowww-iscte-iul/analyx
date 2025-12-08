@@ -20,7 +20,7 @@
                 <i class="bi bi-person-circle"></i>
                 <th:block sec:authentication="name"></th:block>
             </a>
-            <a href="/dashboard" class="btn btn-outline-light btn-sm">
+            <a href="/projects/dashboard" class="btn btn-outline-light btn-sm">
                 <i class="bi bi-speedometer"></i>
                 Dashboard
             </a>
@@ -35,7 +35,7 @@
 </nav>
 <div th:if="*{infoMessage!=null}" class="alert alert-info" th:text="${infoMessage}"></div>
 <div th:if="*{errorMessage!=null}" class="alert alert-danger" th:text="${errorMessage}"></div>
-<div class="container">
+<div class="container pt-5">
 
     <th:block layout:fragment="content"></th:block>
 
