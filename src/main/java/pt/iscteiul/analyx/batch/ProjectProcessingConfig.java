@@ -18,6 +18,9 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import pt.iscteiul.analyx.entity.Artifact;
 
+import static pt.iscteiul.analyx.batch.BatchConstants.JOB_PROCESS_PROJECT;
+import static pt.iscteiul.analyx.batch.BatchConstants.JOB_PROCESS_PROJECT_RESTART;
+
 @Configuration
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class ProjectProcessingConfig {
@@ -28,24 +31,49 @@ public class ProjectProcessingConfig {
 	private JpaTransactionManager transactionManager;
 
 	@Autowired
-	private MarkProjectAsFailed markProjectAsFailed;
+	private BatchExceptionHandler batchExceptionHandler;
 
 	@Bean
-	public CK ck(){
+	public CK ck() {
 		return new CK();
 	}
 
-	@Bean(BatchConstants.JOB_PROCESS_PROJECT)
+	@Bean(JOB_PROCESS_PROJECT)
 	public Job jobProcessProject(Step stepExtractZipFiles,
 								 Step stepReadProjectFiles,
 								 Step stepStartProject,
 								 Step stepFinishProjectExecution
 	) {
-		return new JobBuilder(BatchConstants.JOB_PROCESS_PROJECT, jobRepository)
+		return new JobBuilder(JOB_PROCESS_PROJECT, jobRepository)
 				.start(stepStartProject)
 				.next(stepExtractZipFiles)
 				.next(stepReadProjectFiles)
 				.next(stepFinishProjectExecution)
+				.build();
+	}
+
+	@Bean(JOB_PROCESS_PROJECT_RESTART)
+	public Job jobProcessProjectRestart(
+			Step stepRemoveCurrentArtifacts,
+			Step stepExtractZipFiles,
+			Step stepReadProjectFiles,
+			Step stepStartProject,
+			Step stepFinishProjectExecution
+	) {
+		return new JobBuilder(JOB_PROCESS_PROJECT_RESTART, jobRepository)
+				.start(stepStartProject)
+				.next(stepRemoveCurrentArtifacts)
+				.next(stepExtractZipFiles)
+				.next(stepReadProjectFiles)
+				.next(stepFinishProjectExecution)
+				.build();
+	}
+
+	@Bean
+	public Step stepRemoveCurrentArtifacts(RemoveCurrentArtifactsTasklet removeCurrentArtifactsTasklet) {
+		return new StepBuilder("stepRemoveCurrentArtifacts", jobRepository)
+				.tasklet(removeCurrentArtifactsTasklet, transactionManager)
+				.exceptionHandler(batchExceptionHandler)
 				.build();
 	}
 
@@ -67,7 +95,7 @@ public class ProjectProcessingConfig {
 	public Step stepExtractZipFiles(ExtractZipFilesTasket extractZipFiles) {
 		return new StepBuilder("stepExtractZipFiles", jobRepository)
 				.tasklet(extractZipFiles, transactionManager)
-				.exceptionHandler(markProjectAsFailed)
+				.exceptionHandler(batchExceptionHandler)
 				.build();
 	}
 
@@ -95,7 +123,7 @@ public class ProjectProcessingConfig {
 						)
 						.build())
 				.writer(writer)
-				.exceptionHandler(markProjectAsFailed)
+				.exceptionHandler(batchExceptionHandler)
 				.build();
 	}
 

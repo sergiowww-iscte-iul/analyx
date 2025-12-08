@@ -12,7 +12,7 @@ import pt.iscteiul.analyx.service.ProjectService;
 @Slf4j
 @Component
 @JobScope
-public class MarkProjectAsFailed implements ExceptionHandler {
+public class BatchExceptionHandler implements ExceptionHandler {
 	@Value(BatchConstants.PARAM_ID_PROJECT_EXPR)
 	private Long idProject;
 

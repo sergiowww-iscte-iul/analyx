@@ -34,7 +34,8 @@ public class ExtractZipFilesTasket implements Tasklet {
 		Project project = projectService.getProjectById(idProject);
 		Path projectZipFile = workspaceService.getProjectZipFile(project);
 		Path projectFolder = workspaceService.getProjectFolder(project);
-
+		workspaceService.deleteProjectFolder(project);
+		Files.createDirectories(projectFolder);
 
 		try (InputStream fis = Files.newInputStream(projectZipFile);
 			 ZipInputStream zis = new ZipInputStream(fis)) {

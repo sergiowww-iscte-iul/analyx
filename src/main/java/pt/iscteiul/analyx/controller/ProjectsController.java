@@ -83,7 +83,7 @@ public class ProjectsController {
 
 	@PostMapping("/{idProject}/start-analysis")
 	public String startAnalysis(@PathVariable Integer idProject, RedirectAttributes redirectAttributes) throws Exception {
-		projectBatchServiceManager.startAnalysis(idProject);
+		projectBatchServiceManager.restartAnalysis(idProject);
 		redirectAttributes.addFlashAttribute(ControllerKeys.INFO_MESSAGE, "Project analysis started");
 
 		return "redirect:/projects/dashboard";

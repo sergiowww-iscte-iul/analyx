@@ -23,9 +23,10 @@ public class SecurityConfig {
 								"/user/sign-up",
 								"/css/**",
 								"/js/**",
-								"favicon.ico",
+								"/favicon.ico",
 								"/node_modules/bootstrap/dist/css/**",
-								"/node_modules/bootstrap/dist/js/**"
+								"/node_modules/bootstrap/dist/js/**",
+								"/node_modules/bootstrap-icons/font/**"
 						)
 						.permitAll() // Allow access to login and static resources
 						.anyRequest().authenticated() // All other requests require authentication

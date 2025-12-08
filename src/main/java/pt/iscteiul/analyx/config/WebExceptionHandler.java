@@ -9,7 +9,7 @@ import pt.iscteiul.analyx.exception.BusinessException;
 import static pt.iscteiul.analyx.util.ControllerKeys.ERROR_MESSAGE;
 
 @ControllerAdvice
-public class ExceptionMapper {
+public class WebExceptionHandler {
 
 	@ExceptionHandler(BusinessException.class)
 	public ModelAndView handleBusinessException(

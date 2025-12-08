@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
+import java.util.stream.Stream;
 
 @Service
 public class WorkspaceService {
@@ -43,19 +45,35 @@ public class WorkspaceService {
 	}
 
 	@SneakyThrows
-	public Project deleteProjectFiles( Project project) {
+	public Project deleteProjectFiles(Project project) {
 		Path projectZipFile = getProjectZipFile(project);
+		deleteProjectFolder(project);
 		Files.deleteIfExists(projectZipFile);
 		return project;
 	}
 
+	public void deleteProjectFolder(Project project) throws IOException {
+		Path projectFolder = getProjectFolder(project);
+		if (Files.exists(projectFolder)) {
+			try (Stream<Path> streamPath = Files.walk(projectFolder)) {
+				streamPath
+						.sorted(Comparator.reverseOrder()) // delete files before directories
+						.forEach(this::deleteSilently);
+			}
+			Files.deleteIfExists(projectFolder);
+		}
+
+	}
+
+	@SneakyThrows
+	private void deleteSilently(Path path) {
+		Files.delete(path);
+	}
+
+
 	@SneakyThrows
 	public Path getProjectFolder(Project project) {
 		Path workspace = createWorkspace();
-		Path projectFolder = workspace.resolve("%s-%d".formatted(PROJECT_FILE, project.getId()));
-		if (!Files.exists(projectFolder)) {
-			Files.createDirectories(projectFolder);
-		}
-		return projectFolder;
+		return workspace.resolve("%s-%d".formatted(PROJECT_FILE, project.getId()));
 	}
 }

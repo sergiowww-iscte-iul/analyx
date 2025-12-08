@@ -8,20 +8,27 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import pt.iscteiul.analyx.entity.Project;
+import pt.iscteiul.analyx.service.ArtifactService;
 import pt.iscteiul.analyx.service.ProjectService;
 
 @Slf4j
 @Component
 @JobScope
-public class StartProjectTasklet implements Tasklet {
+public class RemoveCurrentArtifactsTasklet implements Tasklet {
+	@Autowired
+	private ArtifactService artifactService;
+
 	@Autowired
 	private ProjectService projectService;
 
+
 	@Override
-	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
-		log.info("Executing StartProjectTasklet");
+	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+		log.info("Executing RemoveCurrentArtifactsTasklet");
 		Long idProject = (Long) chunkContext.getStepContext().getJobParameters().get(BatchConstants.PARAM_ID_PROJECT);
-		projectService.markProjectAsAnalysisStarted(idProject);
+		Project project = projectService.getProjectById(idProject);
+		artifactService.deleteByProject(project);
 		return RepeatStatus.FINISHED;
 	}
 }
