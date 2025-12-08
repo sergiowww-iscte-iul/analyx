@@ -16,7 +16,7 @@ public class StartProjectTasklet implements Tasklet {
 	private ProjectService projectService;
 
 	@Override
-	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
 		Long idProject = (Long) chunkContext.getStepContext().getJobParameters().get(BatchConstants.PARAM_ID_PROJECT);
 		projectService.markProjectAsAnalysisStarted(idProject);
 		return RepeatStatus.FINISHED;

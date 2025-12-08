@@ -3,7 +3,6 @@ package pt.iscteiul.analyx.batch;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import pt.iscteiul.analyx.entity.Artifact;
 
