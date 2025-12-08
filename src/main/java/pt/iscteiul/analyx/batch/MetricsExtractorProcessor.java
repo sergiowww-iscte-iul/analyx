@@ -45,11 +45,11 @@ public class MetricsExtractorProcessor implements ItemProcessor<FileSystemResour
 			classArtifact.setNumberAttributes(result.getNumberOfFields());
 			classArtifact.setFanIn(result.getFanin());
 			classArtifact.setFanOut(result.getFanout());
-			artifacts.add(classArtifact);
-
-			artifacts.addAll(result.getMethods().stream()
+			classArtifact.setMethodsArtifact(result.getMethods().stream()
 					.map(m -> getCkMethodResultMethodArtifactFunction(m, classArtifact, project))
 					.toList());
+			artifacts.add(classArtifact);
+
 
 		});
 		return artifacts;

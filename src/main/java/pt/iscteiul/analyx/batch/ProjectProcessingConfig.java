@@ -83,7 +83,7 @@ public class ProjectProcessingConfig {
 	) {
 		JpaItemWriter<Artifact> writer = new JpaItemWriterBuilder<Artifact>()
 				.entityManagerFactory(entityManagerFactory)
-				.usePersist(false)
+				.usePersist(true)
 				.build();
 		return new StepBuilder("stepReadProjectFiles", jobRepository)
 				.<FileSystemResource, Artifact>chunk(processingChunkFiles, transactionManager)
