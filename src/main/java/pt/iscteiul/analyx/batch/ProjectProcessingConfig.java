@@ -18,6 +18,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import pt.iscteiul.analyx.entity.Artifact;
 
+import static pt.iscteiul.analyx.batch.BatchConstants.JOB_DELETE_PROJECT;
 import static pt.iscteiul.analyx.batch.BatchConstants.JOB_PROCESS_PROJECT;
 import static pt.iscteiul.analyx.batch.BatchConstants.JOB_PROCESS_PROJECT_RESTART;
 
@@ -36,6 +37,17 @@ public class ProjectProcessingConfig {
 	@Bean
 	public CK ck() {
 		return new CK();
+	}
+
+	@Bean(JOB_DELETE_PROJECT)
+	public Job jobDeleteProject(DeleteProjectTasklet deleteProjectTasklet) {
+		return new JobBuilder(JOB_DELETE_PROJECT, jobRepository)
+				.start(
+						new StepBuilder("stepDeleteProject", jobRepository)
+								.tasklet(deleteProjectTasklet, transactionManager)
+								.build()
+				)
+				.build();
 	}
 
 	@Bean(JOB_PROCESS_PROJECT)

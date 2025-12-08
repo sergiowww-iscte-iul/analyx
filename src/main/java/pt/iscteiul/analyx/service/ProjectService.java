@@ -116,6 +116,11 @@ public class ProjectService {
 		updateStatus(idProject, StatusAnalysis.PROCESSING_FILES);
 	}
 
+	@Transactional
+	public void markProjectAsDeleting(Long idProject) {
+		updateStatus(idProject, StatusAnalysis.DELETING);
+	}
+
 	private void updateStatus(Long idProject, StatusAnalysis status) {
 		Project project = getProjectById(idProject);
 		project.setStatusAnalysis(status);

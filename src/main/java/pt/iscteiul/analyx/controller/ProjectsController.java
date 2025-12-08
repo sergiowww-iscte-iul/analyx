@@ -52,8 +52,8 @@ public class ProjectsController {
 	}
 
 	@PostMapping("{idProject}/delete")
-	public String deleteProject(@PathVariable Integer idProject, RedirectAttributes redirectAttributes) {
-		projectService.delete(idProject);
+	public String deleteProject(@PathVariable Integer idProject, RedirectAttributes redirectAttributes) throws Exception {
+		projectBatchServiceManager.deleteProject(idProject);
 		redirectAttributes.addFlashAttribute(ControllerKeys.INFO_MESSAGE, "Project %d deleted".formatted(idProject));
 		return "redirect:/projects/dashboard";
 	}

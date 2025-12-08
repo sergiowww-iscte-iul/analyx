@@ -12,6 +12,10 @@ import pt.iscteiul.analyx.batch.BatchConstants;
 
 import java.util.Date;
 
+import static pt.iscteiul.analyx.batch.BatchConstants.JOB_DELETE_PROJECT;
+import static pt.iscteiul.analyx.batch.BatchConstants.JOB_PROCESS_PROJECT;
+import static pt.iscteiul.analyx.batch.BatchConstants.JOB_PROCESS_PROJECT_RESTART;
+
 @Service
 public class ProjectBatchServiceManager {
 
@@ -19,12 +23,16 @@ public class ProjectBatchServiceManager {
 	private JobLauncher jobLauncher;
 
 	@Autowired
-	@Qualifier(BatchConstants.JOB_PROCESS_PROJECT)
+	@Qualifier(JOB_PROCESS_PROJECT)
 	private Job jobProcessProject;
 
 	@Autowired
-	@Qualifier(BatchConstants.JOB_PROCESS_PROJECT_RESTART)
+	@Qualifier(JOB_PROCESS_PROJECT_RESTART)
 	private Job jobProcessProjectRestart;
+
+	@Autowired
+	@Qualifier(JOB_DELETE_PROJECT)
+	private Job jobDeleteProject;
 
 
 	@Async
@@ -44,6 +52,15 @@ public class ProjectBatchServiceManager {
 				.addDate("executionTime", executionDate)
 				.toJobParameters();
 		jobLauncher.run(jobProcessProjectRestart, jobParameters);
+
+	}
+
+	@Async
+	public void deleteProject(Integer idProject) throws Exception {
+		JobParameters jobParameters = new JobParametersBuilder()
+				.addLong(BatchConstants.PARAM_ID_PROJECT, idProject.longValue())
+				.toJobParameters();
+		jobLauncher.run(jobDeleteProject, jobParameters);
 
 	}
 }
