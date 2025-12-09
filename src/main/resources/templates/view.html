@@ -78,10 +78,12 @@
                     <th>Methods</th>
                     <th>CBO</th>
                     <th>DIT</th>
+                    <th>Fan in</th>
+                    <th>Fan out</th>
                 </tr>
                 <tr>
                     <th colspan="2"></th>
-                    <th colspan="4" class="text-center">Cyclomatic Complexity</th>
+                    <th colspan="6" class="text-center">Cyclomatic Complexity</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -95,13 +97,15 @@
                         <td th:text="${metric.methodsArtifact.size()}" class="bg-light"></td>
                         <td th:text="${metric.cbo}" class="bg-light"></td>
                         <td th:text="${metric.dit}" class="bg-light"></td>
+                        <td th:text="${metric.fanIn}" class="bg-light"></td>
+                        <td th:text="${metric.fanOut}" class="bg-light"></td>
                     </tr>
                     <tr th:each="method : ${metric.methodsArtifact}">
                         <td th:title="${method.name}">
                             <span class="limited-column ms-4"><i class="bi bi-braces"></i> <strong th:text="${method.name}"></strong></span>
                         </td>
                         <td th:text="${method.linesCode}"></td>
-                        <td colspan="4" class="text-center">
+                        <td colspan="6" class="text-center">
                             <span th:text="${method.cyclomaticComplexity}"></span>
                         </td>
                     </tr>
