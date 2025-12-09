@@ -18,7 +18,6 @@ public class DeleteProjectTasklet implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
 		Long idProject = (Long) chunkContext.getStepContext().getJobParameters().get(BatchConstants.PARAM_ID_PROJECT);
-		projectService.markProjectAsDeleting(idProject);
 		projectService.delete(idProject.intValue());
 		return RepeatStatus.FINISHED;
 	}

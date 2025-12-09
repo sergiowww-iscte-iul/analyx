@@ -143,7 +143,12 @@ public class ProjectService {
 
 	@Transactional
 	public void markProjectAsAnalysisFinished(Long idProject) {
-		updateStatus(idProject, StatusAnalysis.FINISHED);
+		Project project = getProjectById(idProject);
+		if (!project.getStatusAnalysis().equals(StatusAnalysis.ERROR)) {
+			project.setStatusAnalysis(StatusAnalysis.FINISHED);
+			projectRepository.save(project);
+		}
+
 	}
 
 }
