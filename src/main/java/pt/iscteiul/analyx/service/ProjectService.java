@@ -1,7 +1,6 @@
 package pt.iscteiul.analyx.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,7 +61,6 @@ public class ProjectService {
 		return project;
 	}
 
-	@Async
 	public void startAnalysis(Project project, MultipartFile projectFiles) throws Exception {
 		if (projectFiles.isEmpty()) {
 			throw new BusinessException("Project files cannot be empty");

@@ -26,13 +26,13 @@ public class UserController {
 	@GetMapping("/new-user")
 	public String newUser(Model model) {
 		model.addAttribute("userDTO", new UserDTO());
-		return "sign-up-form";
+		return "sign-up";
 	}
 
 	@GetMapping("/profile")
 	public String profile(Model model, Authentication auth) {
 		model.addAttribute("userDTO", userDetailsService.getUserByName(auth.getName()));
-		return "sign-up-form";
+		return "sign-up";
 	}
 
 	@PostMapping("/sign-up")
@@ -43,7 +43,7 @@ public class UserController {
 			return "redirect:/user/login";
 		}
 
-		return "sign-up-form";
+		return "sign-up";
 	}
 
 	@PostMapping("/update")
@@ -59,7 +59,7 @@ public class UserController {
 			userDetailsService.updateUser(userDTO, auth.getName());
 			return "redirect:/";
 		}
-		return "sign-up-form";
+		return "sign-up";
 	}
 
 	@GetMapping("/login")
@@ -74,7 +74,7 @@ public class UserController {
 		if (logout != null) {
 			model.addAttribute(ControllerKeys.INFO_MESSAGE, "You have been logged out successfully.");
 		}
-		return "login-form";
+		return "login";
 	}
 
 	@GetMapping("/logout")
