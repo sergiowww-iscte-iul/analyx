@@ -41,5 +41,9 @@ public class Project {
 	@Column(name = "description",  nullable = false, length = 200)
 	private String description;
 
+	@Transient
+	public boolean isNotDeleted() {
+		return !StatusAnalysis.DELETING.equals(getStatusAnalysis());
+	}
 
 }
